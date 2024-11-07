@@ -14,20 +14,26 @@ def argu():
 
 
 def snake():
+    
     args = argu()
     pygame.init()
     screen = pygame.display.set_mode( (args.width, args.height) )
     clock = pygame.time.Clock()
+    var = True
 
-    while True:
+    while var:
 
         clock.tick(1)
 
         for event in pygame.event.get():
-            pass
-
+            if event.type == pygame.QUIT:
+                var = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    var = False
+                    
         screen.fill( (255, 255, 255) )
 
         pygame.display.update()
 
-
+    pygame.quit()
