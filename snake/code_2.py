@@ -14,20 +14,20 @@ def argu():
     args = parser.parse_args()
     return args
 
+
 def checkerboard(screen, square, height, width):
 
-    i = 0
     noir = (0, 0, 0)
     cpt = 0
 
-    for j in range(0, height, square):
-        for i in range(0, width, square):
-            if cpt == 0:
+    for i in range(0, width, square):
+        for j in range(0, height, 2*square):
+            if cpt%2 == 0:
                 rect = pygame.Rect(i, j, square, square)
             else:
-                rect = pygame.Rect(i+square, j, square, square)
-            cpt += 1
+                rect = pygame.Rect(i, j+square, square, square)
             pygame.draw.rect(screen, noir, rect)
+        cpt += 1
 
 
 
