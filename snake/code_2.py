@@ -4,6 +4,7 @@ import argparse
 DEFAULT_WIDTH = 400
 DEFAULT_HEIGHT = 300
 DEFAULT_SQUARE = 20
+SNAKE = [(20*10, 5*20), (20*10, 6*20), (20*10, 7*20)]
 
 
 def argu():
@@ -30,6 +31,19 @@ def checkerboard(screen, square, height, width):
         cpt += 1
 
 
+def draw_snake1(square, size, head, line, screen):
+    green = (0, 255, 0)
+    sn = pygame.Rect(head*square, line*square, size*square, square)
+    pygame.draw.rect(screen, green, sn)
+
+
+def draw_snake(SNAKE, square, screen):
+    green = (0, 255, 0)
+    for x in SNAKE:
+        (line, col) = x
+        sn = pygame.Rect(col, line, square, square)
+        pygame.draw.rect(screen, green, sn)
+
 
 def snake():
     
@@ -38,6 +52,9 @@ def snake():
     screen = pygame.display.set_mode( (args.width, args.height) )
     clock = pygame.time.Clock()
     flag = True
+    size = 3
+    head = 5
+    line = 10
 
     while flag:
 
@@ -53,6 +70,8 @@ def snake():
         screen.fill( (255, 255, 255) )
 
         checkerboard(screen, args.square, args.height, args.width)
+
+        draw_snake(SNAKE, args.square, screen)
 
         pygame.display.update()
 
