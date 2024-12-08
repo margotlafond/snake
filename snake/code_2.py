@@ -6,6 +6,7 @@ DEFAULT_HEIGHT = 300
 DEFAULT_SQUARE = 20
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
 GLOB_SNAKE = [(20*10, 5*20), (20*10, 6*20), (20*10, 7*20)]
 
 
@@ -77,6 +78,19 @@ class Checkerboard:
                     tile = Tile(self._tile_size, self._color2, (i_col*self._tile_size, i_line*self._tile_size))
                 tile.draw(screen)
 
+class Snake :
+    def __init__(self, length, square, headleft, headtop):
+        self._square = square #taille des carrés composant le snake 
+        self._length = length #longueur du snake
+        self._headleft = headleft #coordonnées gauche de la tête du snake
+        self._headtop = headtop #coordonnées haut de la tête du snake
+        self._snake = pygame.Rect(self._headleft, self._headtop, self._square*self._length, self._square)
+
+    def __repr__(self):
+        return f"The snake is {self._length} long and the size of the squares is {self._square}."
+
+    def draw(self, screen):
+        pygame.draw.rect(screen, GREEN, self._snake)
 
 
 
@@ -91,6 +105,7 @@ def snake():
     LINES = args.height//args.square
     COL = args.width//args.square
     checkerboard = Checkerboard(LINES, COL, BLACK, WHITE, args.square)
+    snake = Snake(3, args.square, 5*args.square, 10*args.square)
 
     while flag:
 
@@ -104,11 +119,10 @@ def snake():
                     flag = False
                     
         #screen.fill( (255, 255, 255) )
-
         #checkerboard(screen, args.square, args.height, args.width)
-
         #draw_snake(GLOB_SNAKE, args.square, screen)
         checkerboard.draw(screen)
+        snake.draw(screen)
         pygame.display.update()
 
     pygame.quit()
