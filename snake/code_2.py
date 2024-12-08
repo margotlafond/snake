@@ -78,19 +78,64 @@ class Checkerboard:
                     tile = Tile(self._tile_size, self._color2, (i_col*self._tile_size, i_line*self._tile_size))
                 tile.draw(screen)
 
+
+
 class Snake :
     def __init__(self, length, square, headleft, headtop):
         self._square = square #taille des carrés composant le snake 
         self._length = length #longueur du snake
-        self._headleft = headleft #coordonnées gauche de la tête du snake
-        self._headtop = headtop #coordonnées haut de la tête du snake
-        self._snake = pygame.Rect(self._headleft, self._headtop, self._square*self._length, self._square)
+        self._headleft = headleft #n°colonne gauche de la tête du snake
+        self._headtop = headtop #n°ligne haut de la tête du snake
+        self._snake = [[headtop, headleft + length -1 - i] for i in range(length)] #tête à la fin
+
 
     def __repr__(self):
         return f"The snake is {self._length} long and the size of the squares is {self._square}."
 
     def draw(self, screen):
-        pygame.draw.rect(screen, GREEN, self._snake)
+        for coord in self._snake:
+            sq_snake = pygame.Rect(coord[1]*self._square, coord[0]*self._square, self._square, self._square)
+            pygame.draw.rect(screen, GREEN, sq_snake)
+    
+    def move(self, COL, LINES, direction):
+        """
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RIGHT:
+                    self._direction = 'right'
+                elif event.key == pygame.K_LEFT:
+                    self._direction = 'left'
+                elif event.key == pygame.K_UP:
+                    self._direction = 'up'
+                elif event.key == pygame.K_DOWN:
+                    self._direction = 'down'
+        """
+
+        l, c = self._snake[-1]
+        if direction == 'left':
+            if c-1 < 0:
+                self._snake.append([l, COL-1])
+            else :
+                self._snake.append([l, c-1])
+            self._snake.pop(0)
+        elif direction == 'right':
+            if c+1 > COL-1:
+                self._snake.append([l, 0])
+            else:
+                self._snake.append([l, c+1])
+            self._snake.pop(0)
+        elif direction == 'up':
+            if l < 1 :
+                self._snake.append([LINES-1, c]) 
+            else:   
+                self._snake.append([l-1, c])
+            self._snake.pop(0)
+        elif direction == 'down':
+            if l+1 > LINES-1:
+                self._snake.append([0, c])
+            else:
+                self._snake.append([l+1, c])
+            self._snake.pop(0)
 
 
 
@@ -98,6 +143,10 @@ class Snake :
 def snake():
     
     args = argu()
+    direction = 'left'
+    sn_lenght = 3
+    sn_line = 10
+    sn_col = 5
     pygame.init()
     screen = pygame.display.set_mode( (args.width, args.height) )
     clock = pygame.time.Clock()
@@ -105,11 +154,11 @@ def snake():
     LINES = args.height//args.square
     COL = args.width//args.square
     checkerboard = Checkerboard(LINES, COL, BLACK, WHITE, args.square)
-    snake = Snake(3, args.square, 5*args.square, 10*args.square)
+    snake = Snake(sn_lenght, args.square, sn_col, sn_line)
 
     while flag:
 
-        clock.tick(1)
+        clock.tick(3)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -117,12 +166,24 @@ def snake():
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
                     flag = False
+                if event.key == pygame.K_RIGHT:
+                    direction = 'right'
+                elif event.key == pygame.K_LEFT:
+                    direction = 'left'
+                elif event.key == pygame.K_UP:
+                    direction = 'up'
+                elif event.key == pygame.K_DOWN:
+                    direction = 'down'
                     
         #screen.fill( (255, 255, 255) )
         #checkerboard(screen, args.square, args.height, args.width)
         #draw_snake(GLOB_SNAKE, args.square, screen)
         checkerboard.draw(screen)
+        
         snake.draw(screen)
+        snake.move(COL, LINES, direction)
+                
+
         pygame.display.update()
 
     pygame.quit()
