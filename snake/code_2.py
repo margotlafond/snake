@@ -234,10 +234,12 @@ def snake():
         if fruit.position() in snake:
             snake.grow(direction, COL, LINES)
             score += 1
-            if score%2 == 0:
+            if score%2 != 0:
                 fruit = Fruit(args.square, 10, 15, score)
             else:
                 fruit = Fruit(args.square, 3, 3, score)
+
+        pygame.display.set_caption(f"Snake - Score: {score}")
 
 
         pygame.display.update()
