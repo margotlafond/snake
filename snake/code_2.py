@@ -7,6 +7,7 @@ DEFAULT_SQUARE = 20
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
+RED = (255, 0, 0)
 GLOB_SNAKE = [(20*10, 5*20), (20*10, 6*20), (20*10, 7*20)]
 
 
@@ -90,7 +91,13 @@ class Snake :
 
 
     def __repr__(self):
-        return f"The snake is {self._length} long and the size of the squares is {self._square}."
+        pass
+    
+    def __contains__(self, cell):
+        """
+        cell : cell of the checkerboard [headtop, headleft] wich are the numbers of the lines/columns
+        """
+        return cell in self._snake 
 
     def draw(self, screen):
         for coord in self._snake:
@@ -98,44 +105,82 @@ class Snake :
             pygame.draw.rect(screen, GREEN, sq_snake)
     
     def move(self, COL, LINES, direction):
-        """
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RIGHT:
-                    self._direction = 'right'
-                elif event.key == pygame.K_LEFT:
-                    self._direction = 'left'
-                elif event.key == pygame.K_UP:
-                    self._direction = 'up'
-                elif event.key == pygame.K_DOWN:
-                    self._direction = 'down'
-        """
-
         l, c = self._snake[-1]
+
         if direction == 'left':
             if c-1 < 0:
                 self._snake.append([l, COL-1])
             else :
                 self._snake.append([l, c-1])
             self._snake.pop(0)
+
         elif direction == 'right':
             if c+1 > COL-1:
                 self._snake.append([l, 0])
             else:
                 self._snake.append([l, c+1])
             self._snake.pop(0)
+
         elif direction == 'up':
             if l < 1 :
                 self._snake.append([LINES-1, c]) 
             else:   
                 self._snake.append([l-1, c])
             self._snake.pop(0)
+
         elif direction == 'down':
             if l+1 > LINES-1:
                 self._snake.append([0, c])
             else:
                 self._snake.append([l+1, c])
             self._snake.pop(0)
+    
+    def grow(self, direction, COL, LINES):
+        l, c = self._snake[-1]
+
+        if direction == 'left':
+            if c-1 < 0:
+                self._snake.append([l, COL-1])
+            else :
+                self._snake.append([l, c-1])
+
+        elif direction == 'right':
+            if c+1 > COL-1:
+                self._snake.append([l, 0])
+            else:
+                self._snake.append([l, c+1])
+
+        elif direction == 'up':
+            if l < 1 :
+                self._snake.append([LINES-1, c]) 
+            else:   
+                self._snake.append([l-1, c])
+
+        elif direction == 'down':
+            if l+1 > LINES-1:
+                self._snake.append([0, c])
+            else:
+                self._snake.append([l+1, c])
+
+
+    
+class Fruit:
+    def __init__(self, square, line, col, score):
+        self._square = square
+        self._line = line
+        self._col = col
+        self._score = score
+
+    def position(self):
+        return [self._line, self._col]
+    
+    def draw(self, screen):  
+        fruit = pygame.Rect(self._col*self._square, self._line*self._square, self._square, self._square)
+        pygame.draw.rect(screen, RED, fruit)
+
+
+
+
 
 
 
@@ -155,6 +200,8 @@ def snake():
     COL = args.width//args.square
     checkerboard = Checkerboard(LINES, COL, BLACK, WHITE, args.square)
     snake = Snake(sn_lenght, args.square, sn_col, sn_line)
+    score = 0
+    fruit = Fruit(args.square, 3, 3, score)
 
     while flag:
 
@@ -180,9 +227,18 @@ def snake():
         #draw_snake(GLOB_SNAKE, args.square, screen)
         checkerboard.draw(screen)
         
+        fruit.draw(screen)
         snake.draw(screen)
         snake.move(COL, LINES, direction)
-                
+
+        if fruit.position() in snake:
+            snake.grow(direction, COL, LINES)
+            score += 1
+            if score%2 == 0:
+                fruit = Fruit(args.square, 10, 15, score)
+            else:
+                fruit = Fruit(args.square, 3, 3, score)
+
 
         pygame.display.update()
 
