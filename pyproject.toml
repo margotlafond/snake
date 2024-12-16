@@ -13,6 +13,9 @@ pygame = "^2.6.1"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 pudb = "^2024.1.3"
+mypy = "^1.13.0"
+ruff = "^0.8.2"
+coverage = "^7.6.9"
 
 [build-system]
 requires = ["poetry-core"]
@@ -21,3 +24,16 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 salut = "snake.code_1:salut"
 snake = "snake.code_2:snake"
+arnaud = "snake.codearnaud:game"
+
+[tool.mypy]
+files = "."
+strict = true
+pretty = true
+show_error_code_links = true
+show_error_context = true
+show_column_numbers = true
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D203", "D212"]
